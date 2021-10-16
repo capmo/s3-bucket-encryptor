@@ -1,0 +1,25 @@
+{
+  "name": "s3-bucket-encryptor",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy"
+  },
+  "devDependencies": {
+    "@types/node": "10.17.27",
+    "@aws-cdk/aws-iam": "^1.128.0",
+    "@aws-cdk/aws-kms": "^1.128.0",
+    "@aws-cdk/aws-lambda": "^1.128.0",
+    "@aws-cdk/aws-s3": "^1.128.0",
+    "@aws-cdk/cloudformation-include": "^1.128.0",
+    "@aws-cdk/core": "1.128.0",
+    "@capmo/cdk-lib": "1.0.1",
+    "aws-cdk": "1.128.0",
+    "ts-node": "^9.0.0",
+    "typescript": "~3.9.7"
+  },
+  "dependencies": {}
+}

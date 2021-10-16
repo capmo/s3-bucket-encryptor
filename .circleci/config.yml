@@ -1,0 +1,92 @@
+version: 2
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:14
+  working_directory: ~/app
+
+deployment: &deployment
+  <<: *defaults
+  steps:
+    - checkout
+    - restore_cache:
+        key: node-modules-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+    - run:
+        name: Deploying code
+        command: npm run deploy -- --context environment=$ENVIRONMENT --context region=eu-central-1 --context stage=prod --require-approval never
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - test:
+          context: 
+            - org-global
+          filters:
+            tags:
+              only: /.*/
+      - staging-deployment:
+          context: 
+            - aws-staging
+            - org-global
+          requires:
+            - test
+          filters:
+            tags:
+              only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/
+            branches:
+              ignore: /.*/
+
+      - approve_production_deployment:
+          type: approval
+          requires:
+            - staging-deployment
+          filters:
+            tags:
+              only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/
+            branches:
+              ignore: /.*/
+
+      - production-deployment:
+          context: 
+            - aws-production
+            - org-global
+          requires:
+            - approve_production_deployment
+          filters:
+            tags:
+              only: /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\+[0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*)?$/
+            branches:
+              ignore: /.*/
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Installing dependencies
+          command: npm ci
+      - save_cache:
+          key: node-modules-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Testing code
+          command: |
+            npm run test:cov
+            ./cc-test-reporter format-coverage -t lcov -o codeclimate.json coverage/lcov.info
+            ./cc-test-reporter upload-coverage -i codeclimate.json
+  staging-deployment:
+    <<: *deployment
+    environment:
+      ENVIRONMENT: staging
+  production-deployment:
+    <<: *deployment
+    environment:
+      ENVIRONMENT: production

@@ -7,13 +7,14 @@ defaults: &defaults
 
 deployment: &deployment
   <<: *defaults
+  resource_class: small
   steps:
     - checkout
     - restore_cache:
         key: node-modules-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
     - run:
         name: Deploying code
-        command: npm run deploy -- --context environment=$ENVIRONMENT --context region=eu-central-1 --context stage=prod --require-approval never
+        command: npm run deploy -- --ci --context environment=$ENVIRONMENT --context region=eu-central-1 --context stage=prod --require-approval never --progress events
 
 workflows:
   version: 2
@@ -62,6 +63,7 @@ workflows:
 jobs:
   test:
     <<: *defaults
+    resource_class: small
     steps:
       - checkout
       - run:
@@ -72,16 +74,9 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: Setup Code Climate test-reporter
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-      - run:
-          name: Testing code
-          command: |
-            npm run test:cov
-            ./cc-test-reporter format-coverage -t lcov -o codeclimate.json coverage/lcov.info
-            ./cc-test-reporter upload-coverage -i codeclimate.json
+          name: Linting code
+          command: npm run lint -- --format codeframe
+
   staging-deployment:
     <<: *deployment
     environment:

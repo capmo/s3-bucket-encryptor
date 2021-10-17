@@ -6,7 +6,8 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cdk deploy"
+    "deploy": "cdk deploy",
+    "lint": "eslint . --ext .js,.ts --ignore-path .gitignore"
   },
   "devDependencies": {
     "@types/node": "10.17.27",
@@ -17,7 +18,14 @@
     "@aws-cdk/cloudformation-include": "^1.128.0",
     "@aws-cdk/core": "1.128.0",
     "@capmo/cdk-lib": "1.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
     "aws-cdk": "1.128.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "prettier": "^2.3.2",
+    "source-map-support": "^0.5.16",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },

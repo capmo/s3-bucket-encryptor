@@ -17,7 +17,6 @@
     "@aws-cdk/aws-s3": "^1.128.0",
     "@aws-cdk/cloudformation-include": "^1.128.0",
     "@aws-cdk/core": "1.128.0",
-    "@capmo/cdk-lib": "1.0.1",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "@typescript-eslint/parser": "^4.29.2",
     "aws-cdk": "1.128.0",

@@ -2,6 +2,7 @@ import { CompositePrincipal, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import { Key } from '@aws-cdk/aws-kms';
 import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
 import { Duration } from '@aws-cdk/core';
+import { S3InventoryEnforceSSETagKey } from '@capmo/cdk-lib/lib/s3/secure-bucket';
 import { batchReportBucket, inventoryReportBucket } from '../bucket';
 import { cfStackParameters } from '../cloud-formation/parameters';
 import { region, stack } from '../stack';
@@ -81,7 +82,7 @@ export const encryptorController = new Function(stack, 'EncryptorController', {
      * must be in the same region in which this template is being deployed in order for
      * S3 Inventory to work.
      */
-    S3TargetTagKey: '__S3Inventory_EnforceSSE', // TODO Import from cdk-lib
+    S3TargetTagKey: S3InventoryEnforceSSETagKey,
     /**
      * Name of the tag value that specifies which S3 buckets should
      * be targeted for the generation of S3 Inventory reports and optionally encryption.

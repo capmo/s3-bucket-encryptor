@@ -19,3 +19,12 @@ export AWS_PROFILE=capmo-dev
 npm run deploy 
 ```
 
+## Known caveats 
+
+### S3 inventory report delivery - access denied
+
+Once the stack is deployed and S3 buckets are marked with the respective `S3TargetTagKey` an S3 inventory report configuration is created. The inventory report is usually created every night around 00:00am. It could happen that the inventory report delivery fails due to the error **Access denied**. 
+
+This can be fixed by manually editing the S3 inventory configuration via the link https://s3.console.aws.amazon.com/s3/management/**bucket-name**/inventory/view?region=eu-central-1&id=ObjectEncryptionInventoryReport and **disabling server-side encryption**. 
+
+Unfortunately, it was not possible to automate this setting during the stack deployment which seems like an AWS S3 SDK bug.

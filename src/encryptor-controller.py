@@ -223,9 +223,6 @@ class Encryptor:
 
         s3 = boto3.client('s3', region_name=self.deployment_region)
 
-        # Use basic SSE-S3 encryption for the S3 inventory reports
-        encryption = {'SSES3': {}}
-
         for bucket in self.s3_target_buckets:
 
             try:
@@ -245,9 +242,7 @@ class Encryptor:
                         'S3BucketDestination': {
                             'AccountId': self.account_id,
                             'Bucket': f'arn:aws:s3:::{self.s3_inv_reports_bucket}',
-                            'Format': 'CSV',
-                            'Encryption': encryption
-                        }
+                            'Format': 'CSV'                        }
                     },
                     'IsEnabled': True,
                     'Id': self.inventories_name,
@@ -342,8 +337,10 @@ class Encryptor:
                     current_arns = statement['Condition']['ArnLike']['aws:SourceArn']
                     # Still multiple ARNs in the bucket policy
                     if isinstance(current_arns, list):
-                        current_arns.remove(
-                            f'arn:aws:s3:::{self.manifest.split("/")[0]}')
+                        try:
+                            current_arns.remove(f'arn:aws:s3:::{self.manifest.split("/")[0]}')
+                        except ValueError:
+                            pass
                         statement['Condition']['ArnLike']['aws:SourceArn'] = current_arns
                         existing_statement[i] = statement
                     # Only one ARN left

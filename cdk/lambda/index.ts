@@ -51,7 +51,7 @@ export const encryptorController = new Function(stack, 'EncryptorController', {
      * all Batch operations will be reported. If set to "FailedTasksOnly", then only
      * failed Batch operations will be recorded in the reports.
      */
-    ReportingLevel: 'FailedTasksOnly',
+    ReportingLevel: 'AllTasks',
     RoleArn: encryptorControllerRole.roleArn,
     S3BatchReportsBucket: batchReportBucket.bucketName,
     /**

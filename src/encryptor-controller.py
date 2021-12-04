@@ -246,7 +246,7 @@ class Encryptor:
                     },
                     'IsEnabled': True,
                     'Id': self.inventories_name,
-                    'IncludedObjectVersions': 'All',
+                    'IncludedObjectVersions': 'Current',
                     'OptionalFields': [
                         'EncryptionStatus'
                     ],
@@ -281,7 +281,7 @@ class Encryptor:
                 },
                 'IsEnabled': True,
                 'Id': self.inventories_name,
-                'IncludedObjectVersions': 'All',
+                'IncludedObjectVersions': 'Current',
                 'OptionalFields': [
                     'EncryptionStatus'
                 ],

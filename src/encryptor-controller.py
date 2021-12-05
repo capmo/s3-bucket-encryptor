@@ -264,8 +264,8 @@ class Encryptor:
 
         s3 = boto3.client('s3', region_name=self.deployment_region)
 
-        # determine what type of encryption to use for S3 inventory reports
-        encryption = {'SSES3': {}}
+        # # determine what type of encryption to use for S3 inventory reports
+        # encryption = {'SSES3': {}}
 
         s3.put_bucket_inventory_configuration(
             Bucket=bucket,
@@ -276,7 +276,7 @@ class Encryptor:
                         'AccountId': self.account_id,
                         'Bucket': f'arn:aws:s3:::{self.s3_inv_reports_bucket}',
                         'Format': 'CSV',
-                        'Encryption': encryption
+                        # 'Encryption': encryption
                     }
                 },
                 'IsEnabled': True,
